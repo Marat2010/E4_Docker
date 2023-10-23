@@ -12,9 +12,9 @@ service postgresql start
 python manage.py migrate --no-input
 python manage.py createsuperuser --no-input
 
-
 service nginx start
 gunicorn Dj_proj.wsgi:application --bind 0.0.0.0:8000
+
 
 #-------------------------
 #python manage.py runserver 0.0.0.0:8000
@@ -24,4 +24,4 @@ gunicorn Dj_proj.wsgi:application --bind 0.0.0.0:8000
 #do
 #    sleep 1
 #done
-
+#-------------------------
