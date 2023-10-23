@@ -6,13 +6,13 @@ ENV DJANGO_SUPERUSER_USERNAME=admin
 ENV DJANGO_SUPERUSER_EMAIL=admin@example.com
 ENV DJANGO_SUPERUSER_PASSWORD=admin
 
-RUN apt-get update && apt-get install -y nginx 
+RUN apt-get update && apt-get install -y nginx postgresql postgresql-contrib
 
 RUN mkdir /Dj_server
 
 WORKDIR /Dj_server
 
-VOLUME /Dj_server
+VOLUME ["/Dj_server", "/var/lib/postgresql"]
 
 COPY requirements.txt .
 COPY settings.py .
@@ -22,11 +22,12 @@ RUN chmod +x entrypoint.sh
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8080
+RUN service postgresql start &&  \
+    su - postgres -c "psql -c \"CREATE DATABASE dj_db;\"" && \
+    su - postgres -c "psql -c \"CREATE USER db_user WITH PASSWORD 'db_pass';\"" && \
+    su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE dj_db TO db_user;\""
+
+EXPOSE 80 5432 8000
 
 ENTRYPOINT ["./entrypoint.sh"]
-
-
-
-
 
